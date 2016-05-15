@@ -1,0 +1,20 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/binaryen-c-dll/Debug
+/binaryen-c-dll/x64/Debug
+/binaryen-c-staticlib/Debug
+/binaryen-c-staticlib/x64/Debug
+/c-api-hello-world/Debug
+/c-api-hello-world/x64/Debug
+/c-api-kitchen-sink/Debug
+/c-api-kitchen-sink/x64/Debug/c-api-ki.9980CB5D.tlog
+/.vs/c-api-examples/v14
+/c-api-kitchen-sink/x64/Debug
+/cs-api-hello-world/bin/Debug
+/cs-api-hello-world/obj/Debug
+/cs-api-kitchen-sink/bin/Debug
+/cs-api-kitchen-sink/obj/Debug/cs-api-kitchen-sink.csproj.FileListAbsolute.txt
+/cs-api-kitchen-sink/obj/Debug
+/x64/Debug
