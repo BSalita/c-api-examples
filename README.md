@@ -1,5 +1,5 @@
 # c-api-examples in C and CS
-Visual Studio 2015 solution for building WebAssembly/binaryen/test/examples/binaryen-c files. Examples are built using test source code in bot C and C#.
+Visual Studio 2015 solution for building https://github.com/WebAssembly/binaryen/tree/master/test/example. Examples are built using test source code in bot C and C#.
 
 1. Builds binaryen-c.cpp into a static library.
 2. Builds binaryen-c-dll.c into a dynamic library by DllExporting from the static library.
