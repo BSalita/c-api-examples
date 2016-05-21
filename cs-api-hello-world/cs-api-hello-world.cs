@@ -31,31 +31,31 @@ namespace cs_api_hello_world_staticlib
 
     class Program
     {
-        [DllImport(@"..\..\..\x64\Debug\binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static BinaryenModuleRef BinaryenModuleCreate();
 
-        [DllImport(@"..\..\..\x64\Debug\binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static BinaryenType BinaryenInt32();
 
-        [DllImport(@"..\..\..\x64\Debug\binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static BinaryenFunctionTypeRef BinaryenAddFunctionType(BinaryenModuleRef module, string name, BinaryenType result, BinaryenType[] paramTypes, BinaryenIndex numParams);
 
-        [DllImport(@"..\..\..\x64\Debug\binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static BinaryenExpressionRef BinaryenGetLocal(BinaryenModuleRef module, BinaryenIndex Index, BinaryenType type);
 
-        [DllImport(@"..\..\..\x64\Debug\binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static BinaryenExpressionRef BinaryenBinary(BinaryenModuleRef module, BinaryenOp op, BinaryenExpressionRef left, BinaryenExpressionRef right);
 
-        [DllImport(@"..\..\..\x64\Debug\binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static BinaryenOp BinaryenAdd();
 
-        [DllImport(@"..\..\..\x64\Debug\binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static BinaryenFunctionRef BinaryenAddFunction(BinaryenModuleRef module, string name, BinaryenFunctionTypeRef type, ref BinaryenType localTypes, BinaryenIndex numLocalTypes, BinaryenExpressionRef body);
 
-        [DllImport(@"..\..\..\x64\Debug\binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static void BinaryenModulePrint(BinaryenModuleRef module);
 
-        [DllImport(@"..\..\..\x64\Debug\binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static void BinaryenModuleDispose(BinaryenModuleRef module);
 
         static BinaryenType tempType;
