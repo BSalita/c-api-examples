@@ -1,5 +1,5 @@
 # c-api-examples in C and CS
-Visual Studio 2015 solution for building https://github.com/WebAssembly/binaryen/tree/master/test/example. Examples are built in original C++ and C#. C# examples are translations of C++. `c-api-com` project demonstrates instantiating and calling a COM (OLE) object from WebAssembly.
+Visual Studio 2015 solution for building https://github.com/WebAssembly/binaryen/tree/master/test/example. Examples are built in original C++ and C#. C# examples are translations of C++ examples. `c-api-com` project demonstrates instantiating and calling a COM (OLE) object from WebAssembly.
 
 1. Builds binaryen-c.cpp into a static library.
 2. Builds binaryen-c-dll.c into a dynamic library by DllExporting from the static library.
