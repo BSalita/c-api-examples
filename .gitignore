@@ -30,3 +30,5 @@
 /cs-api-kitchen-sink/bin/Release
 /cs-api-kitchen-sink/obj
 /Win32
+/c-api-com/Debug
+/c-api-com/x64/Debug

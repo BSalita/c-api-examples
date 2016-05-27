@@ -14,20 +14,21 @@ namespace cs_api_hello_world_staticlib
     using BinaryenIndex = UInt32;
     using BinaryenOp = Int32;
     using BinaryenFunctionRef = UIntPtr;
-#if false
-    //using BinaryenLiteral = UInt32; // to do
 
+    [StructLayout(LayoutKind.Explicit)]
     struct BinaryenLiteral
     {
+        [FieldOffset(0)]
         Int32 type;
-        // union { to do
+        [FieldOffset(4)]
         Int32 i32;
+        [FieldOffset(4)]
         Int64 i64;
+        [FieldOffset(4)]
         float f32;
+        [FieldOffset(4)]
         double f64;
-        //};
     };
-#endif
 
     class Program
     {
@@ -47,18 +48,16 @@ namespace cs_api_hello_world_staticlib
         extern static BinaryenExpressionRef BinaryenBinary(BinaryenModuleRef module, BinaryenOp op, BinaryenExpressionRef left, BinaryenExpressionRef right);
 
         [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
-        extern static BinaryenOp BinaryenAdd();
+        extern static BinaryenOp BinaryenAddInt32();
 
         [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
-        extern static BinaryenFunctionRef BinaryenAddFunction(BinaryenModuleRef module, string name, BinaryenFunctionTypeRef type, ref BinaryenType localTypes, BinaryenIndex numLocalTypes, BinaryenExpressionRef body);
+        extern static BinaryenFunctionRef BinaryenAddFunction(BinaryenModuleRef module, string name, BinaryenFunctionTypeRef type, BinaryenType[] localTypes, BinaryenIndex numLocalTypes, BinaryenExpressionRef body);
 
         [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static void BinaryenModulePrint(BinaryenModuleRef module);
 
         [DllImport(@"binaryen-c-dll.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static void BinaryenModuleDispose(BinaryenModuleRef module);
-
-        static BinaryenType tempType;
 
         static void Main(string[] args)
         {
@@ -71,13 +70,12 @@ namespace cs_api_hello_world_staticlib
             // Get the 0 and 1 arguments, and add them
             BinaryenExpressionRef x = BinaryenGetLocal(module, 0, BinaryenInt32()),
                                   y = BinaryenGetLocal(module, 1, BinaryenInt32());
-            BinaryenExpressionRef add = BinaryenBinary(module, BinaryenAdd(), x, y);
+            BinaryenExpressionRef add = BinaryenBinary(module, BinaryenAddInt32(), x, y);
 
             // Create the add function
             // Note: no additional local variables
             // Note: no basic blocks here, we are an AST. The function body is just an expression node.
-            tempType = 0;
-            BinaryenFunctionRef adder = BinaryenAddFunction(module, "adder", iii, ref tempType, 0, add);
+            BinaryenFunctionRef adder = BinaryenAddFunction(module, "adder", iii, new uint[1], 0, add);
 
             // Print it out
             BinaryenModulePrint(module);

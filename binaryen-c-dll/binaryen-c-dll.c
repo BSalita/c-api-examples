@@ -25,780 +25,308 @@
 #define Alias(func) comment(linker, "/export:" func "=_" func)
 #endif
 
-#pragma Alias("BinaryenAbs")
-#pragma Alias("BinaryenAdd")
-#pragma Alias("BinaryenAddExport")
-#pragma Alias("BinaryenAddFunction")
+// Core types (call to get the value of each; you can cache them, they
+// never change)
+
+#pragma Alias("BinaryenNone")
+#pragma Alias("BinaryenInt32")
+#pragma Alias("BinaryenInt64")
+#pragma Alias("BinaryenFloat32")
+#pragma Alias("BinaryenFloat64")
+
+// Modules
+//
+// Modules contain lists of functions, imports, exports, function types. The
+// Add* methods create them on a module. The module owns them and will free their
+// memory when the module is disposed of.
+//
+// Expressions are also allocated inside modules, and freed with the module. They
+// are not created by Add* methods, since they are not added directly on the
+// module, instead, they are arguments to other expressions (and then they are
+// the children of that AST node), or to a function (and then they are the body
+// of that function).
+//
+// A module can also contain a function table for indirect calls, a memory,
+// and a start method.
+
+#pragma Alias("BinaryenModuleCreate")
+#pragma Alias("BinaryenModuleDispose")
+
+// Function types
+
+typedef void* BinaryenFunctionTypeRef;
+
+// Note: name can be NULL, in which case we auto-generate a name
 #pragma Alias("BinaryenAddFunctionType")
-#pragma Alias("BinaryenAddImport")
-#pragma Alias("BinaryenAnd")
-#pragma Alias("BinaryenBinary")
+
+// Literals. These are passed by value.
+
+#pragma Alias("BinaryenLiteralInt32")
+#pragma Alias("BinaryenLiteralInt64")
+#pragma Alias("BinaryenLiteralFloat32")
+#pragma Alias("BinaryenLiteralFloat64")
+#pragma Alias("BinaryenLiteralFloat32Bits")
+#pragma Alias("BinaryenLiteralFloat64Bits")
+
+// Expressions
+//
+// Some expressions have a BinaryenOp, which is the more
+// specific operation/opcode.
+//
+// Some expressions have optional parameters, like Return may not
+// return a value. You can supply a NULL pointer in those cases.
+//
+// For more information, see wasm.h
+
+#pragma Alias("BinaryenClzInt32")
+#pragma Alias("BinaryenCtzInt32")
+#pragma Alias("BinaryenPopcntInt32")
+#pragma Alias("BinaryenNegFloat32")
+#pragma Alias("BinaryenAbsFloat32")
+#pragma Alias("BinaryenCeilFloat32")
+#pragma Alias("BinaryenFloorFloat32")
+#pragma Alias("BinaryenTruncFloat32")
+#pragma Alias("BinaryenNearestFloat32")
+#pragma Alias("BinaryenSqrtFloat32")
+#pragma Alias("BinaryenEqZInt32")
+#pragma Alias("BinaryenClzInt64")
+#pragma Alias("BinaryenCtzInt64")
+#pragma Alias("BinaryenPopcntInt64")
+#pragma Alias("BinaryenNegFloat64")
+#pragma Alias("BinaryenAbsFloat64")
+#pragma Alias("BinaryenCeilFloat64")
+#pragma Alias("BinaryenFloorFloat64")
+#pragma Alias("BinaryenTruncFloat64")
+#pragma Alias("BinaryenNearestFloat64")
+#pragma Alias("BinaryenSqrtFloat64")
+#pragma Alias("BinaryenEqZInt64")
+#pragma Alias("BinaryenExtendSInt32")
+#pragma Alias("BinaryenExtentUInt32")
+#pragma Alias("BinaryenWrapInt64")
+#pragma Alias("BinaryenTruncSFloat32ToInt32")
+#pragma Alias("BinaryenTruncSFloat32ToInt64")
+#pragma Alias("BinaryenTruncUFloat32ToInt32")
+#pragma Alias("BinaryenTruncUFloat32ToInt64")
+#pragma Alias("BinaryenTruncSFloat64ToInt32")
+#pragma Alias("BinaryenTruncSFloat64ToInt64")
+#pragma Alias("BinaryenTruncUFloat64ToInt32")
+#pragma Alias("BinaryenTruncUFloat64ToInt64")
+#pragma Alias("BinaryenReinterpretFloat32")
+#pragma Alias("BinaryenReinterpretFloat64")
+#pragma Alias("BinaryenConvertSInt32ToFloat32")
+#pragma Alias("BinaryenConvertSInt32ToFloat64")
+#pragma Alias("BinaryenConvertUInt32ToFloat32")
+#pragma Alias("BinaryenConvertUInt32ToFloat64")
+#pragma Alias("BinaryenConvertSInt64ToFloat32")
+#pragma Alias("BinaryenConvertSInt64ToFloat64")
+#pragma Alias("BinaryenConvertUInt64ToFloat32")
+#pragma Alias("BinaryenConvertUInt64ToFloat64")
+#pragma Alias("BinaryenPromoteFloat32")
+#pragma Alias("BinaryenDemoteFloat64")
+#pragma Alias("BinaryenReinterpretInt32")
+#pragma Alias("BinaryenReinterpretInt64")
+#pragma Alias("BinaryenAddInt32")
+#pragma Alias("BinaryenSubInt32")
+#pragma Alias("BinaryenMulInt32")
+#pragma Alias("BinaryenDivSInt32")
+#pragma Alias("BinaryenDivUInt32")
+#pragma Alias("BinaryenRemSInt32")
+#pragma Alias("BinaryenRemUInt32")
+#pragma Alias("BinaryenAndInt32")
+#pragma Alias("BinaryenOrInt32")
+#pragma Alias("BinaryenXorInt32")
+#pragma Alias("BinaryenShlInt32")
+#pragma Alias("BinaryenShrUInt32")
+#pragma Alias("BinaryenShrSInt32")
+#pragma Alias("BinaryenRotLInt32")
+#pragma Alias("BinaryenRotRInt32")
+#pragma Alias("BinaryenEqInt32")
+#pragma Alias("BinaryenNeInt32")
+#pragma Alias("BinaryenLtSInt32")
+#pragma Alias("BinaryenLtUInt32")
+#pragma Alias("BinaryenLeSInt32")
+#pragma Alias("BinaryenLeUInt32")
+#pragma Alias("BinaryenGtSInt32")
+#pragma Alias("BinaryenGtUInt32")
+#pragma Alias("BinaryenGeSInt32")
+#pragma Alias("BinaryenGeUInt32")
+#pragma Alias("BinaryenAddInt64")
+#pragma Alias("BinaryenSubInt64")
+#pragma Alias("BinaryenMulInt64")
+#pragma Alias("BinaryenDivSInt64")
+#pragma Alias("BinaryenDivUInt64")
+#pragma Alias("BinaryenRemSInt64")
+#pragma Alias("BinaryenRemUInt64")
+#pragma Alias("BinaryenAndInt64")
+#pragma Alias("BinaryenOrInt64")
+#pragma Alias("BinaryenXorInt64")
+#pragma Alias("BinaryenShlInt64")
+#pragma Alias("BinaryenShrUInt64")
+#pragma Alias("BinaryenShrSInt64")
+#pragma Alias("BinaryenRotLInt64")
+#pragma Alias("BinaryenRotRInt64")
+#pragma Alias("BinaryenEqInt64")
+#pragma Alias("BinaryenNeInt64")
+#pragma Alias("BinaryenLtSInt64")
+#pragma Alias("BinaryenLtUInt64")
+#pragma Alias("BinaryenLeSInt64")
+#pragma Alias("BinaryenLeUInt64")
+#pragma Alias("BinaryenGtSInt64")
+#pragma Alias("BinaryenGtUInt64")
+#pragma Alias("BinaryenGeSInt64")
+#pragma Alias("BinaryenGeUInt64")
+#pragma Alias("BinaryenAddFloat32")
+#pragma Alias("BinaryenSubFloat32")
+#pragma Alias("BinaryenMulFloat32")
+#pragma Alias("BinaryenDivFloat32")
+#pragma Alias("BinaryenCopySignFloat32")
+#pragma Alias("BinaryenMinFloat32")
+#pragma Alias("BinaryenMaxFloat32")
+#pragma Alias("BinaryenEqFloat32")
+#pragma Alias("BinaryenNeFloat32")
+#pragma Alias("BinaryenLtFloat32")
+#pragma Alias("BinaryenLeFloat32")
+#pragma Alias("BinaryenGtFloat32")
+#pragma Alias("BinaryenGeFloat32")
+#pragma Alias("BinaryenAddFloat64")
+#pragma Alias("BinaryenSubFloat64")
+#pragma Alias("BinaryenMulFloat64")
+#pragma Alias("BinaryenDivFloat64")
+#pragma Alias("BinaryenCopySignFloat64")
+#pragma Alias("BinaryenMinFloat64")
+#pragma Alias("BinaryenMaxFloat64")
+#pragma Alias("BinaryenEqFloat64")
+#pragma Alias("BinaryenNeFloat64")
+#pragma Alias("BinaryenLtFloat64")
+#pragma Alias("BinaryenLeFloat64")
+#pragma Alias("BinaryenGtFloat64")
+#pragma Alias("BinaryenGeFloat64")
+#pragma Alias("BinaryenPageSize")
+#pragma Alias("BinaryenCurrentMemory")
+#pragma Alias("BinaryenGrowMemory")
+#pragma Alias("BinaryenHasFeature")
+
+// Block: name can be NULL
 #pragma Alias("BinaryenBlock")
+// If: ifFalse can be NULL
+#pragma Alias("BinaryenIf")
+// Loop: both out and in can be NULL, or just out can be NULL
+#pragma Alias("BinaryenLoop")
+// Break: value and condition can be NULL
 #pragma Alias("BinaryenBreak")
+// Switch: value can be NULL
+#pragma Alias("BinaryenSwitch")
+// Call, CallImport: Note the 'returnType' parameter. You must declare the
+//                   type returned by the function being called, as that
+//                   function might not have been created yet, so we don't
+//                   know what it is.
 #pragma Alias("BinaryenCall")
 #pragma Alias("BinaryenCallImport")
 #pragma Alias("BinaryenCallIndirect")
-#pragma Alias("BinaryenCeil")
-#pragma Alias("BinaryenClz")
-#pragma Alias("BinaryenConst")
-#pragma Alias("BinaryenConvertSInt32ToFloat32")
-#pragma Alias("BinaryenConvertSInt32ToFloat64")
-#pragma Alias("BinaryenConvertSInt64ToFloat32")
-#pragma Alias("BinaryenConvertSInt64ToFloat64")
-#pragma Alias("BinaryenConvertUInt32ToFloat32")
-#pragma Alias("BinaryenConvertUInt32ToFloat64")
-#pragma Alias("BinaryenConvertUInt64ToFloat32")
-#pragma Alias("BinaryenConvertUInt64ToFloat64")
-#pragma Alias("BinaryenCopySign")
-#pragma Alias("BinaryenCtz")
-#pragma Alias("BinaryenCurrentMemory")
-#pragma Alias("BinaryenDemoteFloat64")
-#pragma Alias("BinaryenDiv")
-#pragma Alias("BinaryenDivS")
-#pragma Alias("BinaryenDivU")
-#pragma Alias("BinaryenEq")
-#pragma Alias("BinaryenEqZ")
-#pragma Alias("BinaryenExtendSInt32")
-#pragma Alias("BinaryenExtentUInt32")
-#pragma Alias("BinaryenFloat32")
-#pragma Alias("BinaryenFloat64")
-#pragma Alias("BinaryenFloor")
-#pragma Alias("BinaryenGe")
-#pragma Alias("BinaryenGeS")
+// GetLocal: Note the 'type' parameter. It might seem redundant, since the
+//           local at that index must have a type. However, this API lets you
+//           build code "top-down": create a node, then its parents, and so
+//           on, and finally create the function at the end. (Note that in fact
+//           you do not mention a function when creating ExpressionRefs, only
+//           a module.) And since GetLocal is a leaf node, we need to be told
+//           its type. (Other nodes detect their type either from their
+//           type or their opcode, or failing that, their children. But
+//           GetLocal has no children, it is where a "stream" of type info
+//           begins.)
 #pragma Alias("BinaryenGetLocal")
-#pragma Alias("BinaryenGeU")
-#pragma Alias("BinaryenGrowMemory")
-#pragma Alias("BinaryenGt")
-#pragma Alias("BinaryenGtS")
-#pragma Alias("BinaryenGtU")
-#pragma Alias("BinaryenHasFeature")
-#pragma Alias("BinaryenHost")
-#pragma Alias("BinaryenIf")
-#pragma Alias("BinaryenInt32")
-#pragma Alias("BinaryenInt64")
-#pragma Alias("BinaryenLe")
-#pragma Alias("BinaryenLeS")
-#pragma Alias("BinaryenLeU")
-#pragma Alias("BinaryenLiteralFloat32")
-#pragma Alias("BinaryenLiteralFloat32Bits")
-#pragma Alias("BinaryenLiteralFloat64")
-#pragma Alias("BinaryenLiteralFloat64Bits")
-#pragma Alias("BinaryenLiteralInt32")
-#pragma Alias("BinaryenLiteralInt64")
-#pragma Alias("BinaryenLoad")
-#pragma Alias("BinaryenLoop")
-#pragma Alias("BinaryenLt")
-#pragma Alias("BinaryenLtS")
-#pragma Alias("BinaryenLtU")
-#pragma Alias("BinaryenMax")
-#pragma Alias("BinaryenMin")
-#pragma Alias("BinaryenModuleCreate")
-#pragma Alias("BinaryenModuleDispose")
-#pragma Alias("BinaryenModuleOptimize")
-#pragma Alias("BinaryenModulePrint")
-#pragma Alias("BinaryenModuleRead")
-#pragma Alias("BinaryenModuleValidate")
-#pragma Alias("BinaryenModuleWrite")
-#pragma Alias("BinaryenMul")
-#pragma Alias("BinaryenNe")
-#pragma Alias("BinaryenNearest")
-#pragma Alias("BinaryenNeg")
-#pragma Alias("BinaryenNone")
-#pragma Alias("BinaryenNop")
-#pragma Alias("BinaryenOr")
-#pragma Alias("BinaryenPageSize")
-#pragma Alias("BinaryenPopcnt")
-#pragma Alias("BinaryenPromoteFloat32")
-#pragma Alias("BinaryenReinterpretFloat32")
-#pragma Alias("BinaryenReinterpretFloat64")
-#pragma Alias("BinaryenReinterpretInt32")
-#pragma Alias("BinaryenReinterpretInt64")
-#pragma Alias("BinaryenRemS")
-#pragma Alias("BinaryenRemU")
-#pragma Alias("BinaryenReturn")
-#pragma Alias("BinaryenRotL")
-#pragma Alias("BinaryenRotR")
-#pragma Alias("BinaryenSelect")
-#pragma Alias("BinaryenSetFunctionTable")
 #pragma Alias("BinaryenSetLocal")
-#pragma Alias("BinaryenSetMemory")
-#pragma Alias("BinaryenSetStart")
-#pragma Alias("BinaryenShl")
-#pragma Alias("BinaryenShrS")
-#pragma Alias("BinaryenShrU")
-#pragma Alias("BinaryenSqrt")
+// Load: align can be 0, in which case it will be the natural alignment (equal to bytes)
+#pragma Alias("BinaryenLoad")
+// Store: align can be 0, in which case it will be the natural alignment (equal to bytes)
 #pragma Alias("BinaryenStore")
-#pragma Alias("BinaryenSub")
-#pragma Alias("BinaryenSwitch")
-#pragma Alias("BinaryenTrunc")
-#pragma Alias("BinaryenTruncSFloat32ToInt32")
-#pragma Alias("BinaryenTruncSFloat32ToInt64")
-#pragma Alias("BinaryenTruncSFloat64ToInt32")
-#pragma Alias("BinaryenTruncSFloat64ToInt64")
-#pragma Alias("BinaryenTruncUFloat32ToInt32")
-#pragma Alias("BinaryenTruncUFloat32ToInt64")
-#pragma Alias("BinaryenTruncUFloat64ToInt32")
-#pragma Alias("BinaryenTruncUFloat64ToInt64")
+#pragma Alias("BinaryenConst")
 #pragma Alias("BinaryenUnary")
+#pragma Alias("BinaryenBinary")
+#pragma Alias("BinaryenSelect")
+// Return: value can be NULL
+#pragma Alias("BinaryenReturn")
+// Host: name may be NULL
+#pragma Alias("BinaryenHost")
+#pragma Alias("BinaryenNop")
 #pragma Alias("BinaryenUnreachable")
-#pragma Alias("BinaryenWrapInt64")
-#pragma Alias("BinaryenXor")
-#pragma Alias("RelooperAddBlock")
-#pragma Alias("RelooperAddBranch")
+
+// Functions
+
+#pragma Alias("BinaryenAddFunction")
+
+// Imports
+
+#pragma Alias("BinaryenAddImport")
+
+// Exports
+
+#pragma Alias("BinaryenAddExport")
+
+// Function table. One per module
+
+#pragma Alias("BinaryenSetFunctionTable")
+
+// Memory. One per module
+
+// Each segment has data in segments, a start offset in segmentOffsets, and a size in segmentSizes.
+// exportName can be NULL
+#pragma Alias("BinaryenSetMemory")
+
+// Start function. One per module
+
+#pragma Alias("BinaryenSetStart")
+
+//
+// ========== Module Operations ==========
+//
+
+// Print a module to stdout.
+#pragma Alias("BinaryenModulePrint")
+
+// Validate a module, showing errors on problems.
+//  @return 0 if an error occurred, 1 if validated succesfully
+#pragma Alias("BinaryenModuleValidate")
+
+// Run the standard optimization passes on the module.
+#pragma Alias("BinaryenModuleOptimize")
+
+// Serialize a module into binary form.
+// @return how many bytes were written. This will be less than or equal to bufferSize
+#pragma Alias("BinaryenModuleWrite")
+
+// Deserialize a module from binary form.
+#pragma Alias("BinaryenModuleRead")
+
+//
+// ========== CFG / Relooper ==========
+//
+// General usage is (1) create a relooper, (2) create blocks, (3) add
+// branches between them, (4) render the output.
+//
+// See Relooper.h for more details
+
+// Create a relooper instance
 #pragma Alias("RelooperCreate")
+
+// Create a basic block that ends with nothing, or with some simple branching
+#pragma Alias("RelooperAddBlock")
+
+// Create a branch to another basic block
+// The branch can have code on it, that is executed as the branch happens. this is useful for phis. otherwise, code can be NULL
+#pragma Alias("RelooperAddBranch")
+
+// Create a basic block that ends a switch on a condition
+// TODO RelooperBlockRef RelooperAddBlockWithSwitch(RelooperRef relooper, BinaryenExpressionRef code, BinaryenExpressionRef condition);
+
+// Create a switch-style branch to another basic block. The block's switch table will have an index for this branch
+// TODO void RelooperAddBranchForSwitch(RelooperBlockRef from, RelooperBlockRef to, BinaryenIndex index, BinaryenExpressionRef code);
+
+// Generate structed wasm control flow from the CFG of blocks and branches that were created
+// on this relooper instance. This returns the rendered output, and also disposes of the
+// relooper and its blocks and branches, as they are no longer needed.
+//   @param labelHelper To render irreducible control flow, we may need a helper variable to
+//                      guide us to the right target label. This value should be an index of
+//                      an i32 local variable that is free for us to use.
 #pragma Alias("RelooperRenderAndDispose")
-
-#else
-
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <binaryen-c.h>
-
-#define APIENTRY
-#define DllExport(result) result
-#define DllImport(result) result
-
-DllExport(BinaryenType) BinaryenNoneDll(void) {
-#pragma comment(linker, "/export:BinaryenNone=BinaryenNoneDll")
-	return BinaryenNone();
-}
-
-DllExport(BinaryenType) BinaryenInt32Dll(void) {
-#pragma comment(linker, "/export:BinaryenInt32=BinaryenInt32Dll")
-	return BinaryenInt32();
-}
-
-DllExport(BinaryenType) BinaryenInt64Dll(void) {
-#pragma comment(linker, "/export:BinaryenInt64=BinaryenInt64Dll")
-	return BinaryenInt64();
-}
-
-DllExport(BinaryenType) BinaryenFloat32Dll(void) {
-#pragma comment(linker, "/export:BinaryenFloat32=BinaryenFloat32Dll")
-	return BinaryenFloat32();
-}
-
-DllExport(BinaryenType) BinaryenFloat64Dll(void) {
-#pragma comment(linker, "/export:BinaryenFloat64=BinaryenFloat64Dll")
-	return BinaryenFloat64();
-}
-
-DllExport(BinaryenModuleRef) BinaryenModuleCreateDll(void) {
-#pragma comment(linker, "/export:BinaryenModuleCreate=BinaryenModuleCreateDll")
-	return BinaryenModuleCreate();
-}
-
-DllExport(void) BinaryenModuleDisposeDll(BinaryenModuleRef module) {
-#pragma comment(linker, "/export:BinaryenModuleDispose=BinaryenModuleDisposeDll")
-	BinaryenModuleDispose(module);
-}
-
-DllExport(BinaryenFunctionTypeRef) BinaryenAddFunctionTypeDll(BinaryenModuleRef module, const char* name, BinaryenType result, BinaryenType* paramTypes, BinaryenIndex numParams) {
-#pragma comment(linker, "/export:BinaryenAddFunctionType=BinaryenAddFunctionTypeDll")
-	return BinaryenAddFunctionType(module, name, result, paramTypes, numParams);
-}
-
-// following binary BinaryenLiteral
-// warning: must change if counterpart in binaryen-c.cpp changes
-enum WasmType {
-	none,
-	i32,
-	i64,
-	f32,
-	f64,
-	unreachable // none means no type, e.g. a block can have no return type. but
-				// unreachable is different, as it can be "ignored" when doing
-				// type checking across branches
-};
-
-DllExport(struct BinaryenLiteral) BinaryenLiteralInt32Dll(int32_t x) {
-#pragma comment(linker, "/export:BinaryenLiteralInt32=BinaryenLiteralInt32Dll")
-	struct BinaryenLiteral ret;
-	ret.type = i32;
-	ret.i32 = x;
-	return ret;
-}
-
-DllExport(struct BinaryenLiteral) BinaryenLiteralInt64Dll(int64_t x) {
-#pragma comment(linker, "/export:BinaryenLiteralInt64=BinaryenLiteralInt64Dll")
-	struct BinaryenLiteral ret;
-	ret.type = i64;
-	ret.i64 = x;
-	return ret;
-}
-
-DllExport(struct BinaryenLiteral) BinaryenLiteralFloat32Dll(float x) {
-#pragma comment(linker, "/export:BinaryenLiteralFloat32=BinaryenLiteralFloat32Dll")
-	struct BinaryenLiteral ret;
-	ret.type = f32;
-	ret.f32 = x;
-	return ret;
-}
-
-DllExport(struct BinaryenLiteral) BinaryenLiteralFloat64Dll(double x) {
-#pragma comment(linker, "/export:BinaryenLiteralFloat64=BinaryenLiteralFloat64Dll")
-	struct BinaryenLiteral ret;
-	ret.type = f64;
-	ret.f64 = x;
-	return ret;
-}
-
-DllExport(struct BinaryenLiteral) BinaryenLiteralFloat32BitsDll(int32_t x) {
-#pragma comment(linker, "/export:BinaryenLiteralFloat32Bits=BinaryenLiteralFloat32BitsDll")
-	struct BinaryenLiteral ret;
-	ret.type = f32;
-	ret.f32 = (float)x;
-	return ret;
-}
-
-DllExport(struct BinaryenLiteral) BinaryenLiteralFloat64BitsDll(int64_t x) {
-#pragma comment(linker, "/export:BinaryenLiteralFloat64Bits=BinaryenLiteralFloat64BitsDll")
-	struct BinaryenLiteral ret;
-	ret.type = f64;
-	ret.f64 = (double)x;
-	return ret;
-}
-
-DllExport(BinaryenOp) BinaryenClzDll(void) {
-#pragma comment(linker, "/export:BinaryenClz=BinaryenClzDll")
-	return BinaryenClz();
-}
-
-DllExport(BinaryenOp) BinaryenCtzDll(void) {
-#pragma comment(linker, "/export:BinaryenCtz=BinaryenCtzDll")
-	return BinaryenCtz();
-}
-
-DllExport(BinaryenOp) BinaryenPopcntDll(void) {
-#pragma comment(linker, "/export:BinaryenPopcnt=BinaryenPopcntDll")
-	return BinaryenPopcnt();
-}
-
-DllExport(BinaryenOp) BinaryenNegDll(void) {
-#pragma comment(linker, "/export:BinaryenNeg=BinaryenNegDll")
-	return BinaryenNeg();
-}
-
-DllExport(BinaryenOp) BinaryenAbsDll(void) {
-#pragma comment(linker, "/export:BinaryenAbs=BinaryenAbsDll")
-	return BinaryenAbs();
-}
-
-DllExport(BinaryenOp) BinaryenCeilDll(void) {
-#pragma comment(linker, "/export:BinaryenCeil=BinaryenCeilDll")
-	return BinaryenCeil();
-}
-
-DllExport(BinaryenOp) BinaryenFloorDll(void) {
-#pragma comment(linker, "/export:BinaryenFloor=BinaryenFloorDll")
-	return BinaryenFloor();
-}
-
-DllExport(BinaryenOp) BinaryenTruncDll(void) {
-#pragma comment(linker, "/export:BinaryenTrunc=BinaryenTruncDll")
-	return BinaryenTrunc();
-}
-
-DllExport(BinaryenOp) BinaryenNearestDll(void) {
-#pragma comment(linker, "/export:BinaryenNearest=BinaryenNearestDll")
-	return BinaryenNearest();
-}
-
-DllExport(BinaryenOp) BinaryenSqrtDll(void) {
-#pragma comment(linker, "/export:BinaryenSqrt=BinaryenSqrtDll")
-	return BinaryenSqrt();
-}
-
-DllExport(BinaryenOp) BinaryenEqZDll(void) {
-#pragma comment(linker, "/export:BinaryenEqZ=BinaryenEqZDll")
-	return BinaryenEqZ();
-}
-
-DllExport(BinaryenOp) BinaryenExtendSInt32Dll(void) {
-#pragma comment(linker, "/export:BinaryenExtendSInt32=BinaryenExtendSInt32Dll")
-	return BinaryenExtendSInt32();
-}
-
-DllExport(BinaryenOp) BinaryenExtentUInt32Dll(void) {
-#pragma comment(linker, "/export:BinaryenExtentUInt32=BinaryenExtentUInt32Dll")
-	return BinaryenExtentUInt32();
-}
-
-DllExport(BinaryenOp) BinaryenWrapInt64Dll(void) {
-#pragma comment(linker, "/export:BinaryenWrapInt64=BinaryenWrapInt64Dll")
-	return BinaryenWrapInt64();
-}
-
-DllExport(BinaryenOp) BinaryenTruncSFloat32ToInt32Dll(void) {
-#pragma comment(linker, "/export:BinaryenTruncSFloat32ToInt32=BinaryenTruncSFloat32ToInt32Dll")
-	return BinaryenTruncSFloat32ToInt32();
-}
-
-DllExport(BinaryenOp) BinaryenTruncSFloat32ToInt64Dll(void) {
-#pragma comment(linker, "/export:BinaryenTruncSFloat32ToInt64=BinaryenTruncSFloat32ToInt64Dll")
-	return BinaryenTruncSFloat32ToInt64();
-}
-
-DllExport(BinaryenOp) BinaryenTruncUFloat32ToInt32Dll(void) {
-#pragma comment(linker, "/export:BinaryenTruncUFloat32ToInt32=BinaryenTruncUFloat32ToInt32Dll")
-	return BinaryenTruncUFloat32ToInt32();
-}
-
-DllExport(BinaryenOp) BinaryenTruncUFloat32ToInt64Dll(void) {
-#pragma comment(linker, "/export:BinaryenTruncUFloat32ToInt64=BinaryenTruncUFloat32ToInt64Dll")
-	return BinaryenTruncUFloat32ToInt64();
-}
-
-DllExport(BinaryenOp) BinaryenTruncSFloat64ToInt32Dll(void) {
-#pragma comment(linker, "/export:BinaryenTruncSFloat64ToInt32=BinaryenTruncSFloat64ToInt32Dll")
-	return BinaryenTruncSFloat64ToInt32();
-}
-
-DllExport(BinaryenOp) BinaryenTruncSFloat64ToInt64Dll(void) {
-#pragma comment(linker, "/export:BinaryenTruncSFloat64ToInt64=BinaryenTruncSFloat64ToInt64Dll")
-	return BinaryenTruncSFloat64ToInt64();
-}
-
-DllExport(BinaryenOp) BinaryenTruncUFloat64ToInt32Dll(void) {
-#pragma comment(linker, "/export:BinaryenTruncUFloat64ToInt32=BinaryenTruncUFloat64ToInt32Dll")
-	return BinaryenTruncUFloat64ToInt32();
-}
-
-DllExport(BinaryenOp) BinaryenTruncUFloat64ToInt64Dll(void) {
-#pragma comment(linker, "/export:BinaryenTruncUFloat64ToInt64=BinaryenTruncUFloat64ToInt64Dll")
-	return BinaryenTruncUFloat64ToInt64();
-}
-
-DllExport(BinaryenOp) BinaryenReinterpretFloat32Dll(void) {
-#pragma comment(linker, "/export:BinaryenReinterpretFloat32=BinaryenReinterpretFloat32Dll")
-	return BinaryenReinterpretFloat32();
-}
-
-DllExport(BinaryenOp) BinaryenReinterpretFloat64Dll(void) {
-#pragma comment(linker, "/export:BinaryenReinterpretFloat64=BinaryenReinterpretFloat64Dll")
-	return BinaryenReinterpretFloat64();
-}
-
-DllExport(BinaryenOp) BinaryenConvertSInt32ToFloat32Dll(void) {
-#pragma comment(linker, "/export:BinaryenConvertSInt32ToFloat32=BinaryenConvertSInt32ToFloat32Dll")
-	return BinaryenConvertSInt32ToFloat32();
-}
-
-DllExport(BinaryenOp) BinaryenConvertSInt32ToFloat64Dll(void) {
-#pragma comment(linker, "/export:BinaryenConvertSInt32ToFloat64=BinaryenConvertSInt32ToFloat64Dll")
-	return BinaryenConvertSInt32ToFloat64();
-}
-
-DllExport(BinaryenOp) BinaryenConvertUInt32ToFloat32Dll(void) {
-#pragma comment(linker, "/export:BinaryenConvertUInt32ToFloat32=BinaryenConvertUInt32ToFloat32Dll")
-	return BinaryenConvertUInt32ToFloat32();
-}
-
-DllExport(BinaryenOp) BinaryenConvertUInt32ToFloat64Dll(void) {
-#pragma comment(linker, "/export:BinaryenConvertUInt32ToFloat64=BinaryenConvertUInt32ToFloat64Dll")
-	return BinaryenConvertUInt32ToFloat64();
-}
-
-DllExport(BinaryenOp) BinaryenConvertSInt64ToFloat32Dll(void) {
-#pragma comment(linker, "/export:BinaryenConvertSInt64ToFloat32=BinaryenConvertSInt64ToFloat32Dll")
-	return BinaryenConvertSInt64ToFloat32();
-}
-
-DllExport(BinaryenOp) BinaryenConvertSInt64ToFloat64Dll(void) {
-#pragma comment(linker, "/export:BinaryenConvertSInt64ToFloat64=BinaryenConvertSInt64ToFloat64Dll")
-	return BinaryenConvertSInt64ToFloat64();
-}
-
-DllExport(BinaryenOp) BinaryenConvertUInt64ToFloat32Dll(void) {
-#pragma comment(linker, "/export:BinaryenConvertUInt64ToFloat32=BinaryenConvertUInt64ToFloat32Dll")
-	return BinaryenConvertUInt64ToFloat32();
-}
-
-DllExport(BinaryenOp) BinaryenConvertUInt64ToFloat64Dll(void) {
-#pragma comment(linker, "/export:BinaryenConvertUInt64ToFloat64=BinaryenConvertUInt64ToFloat64Dll")
-	return BinaryenConvertUInt64ToFloat64();
-}
-
-DllExport(BinaryenOp) BinaryenPromoteFloat32Dll(void) {
-#pragma comment(linker, "/export:BinaryenPromoteFloat32=BinaryenPromoteFloat32Dll")
-	return BinaryenPromoteFloat32();
-}
-
-DllExport(BinaryenOp) BinaryenDemoteFloat64Dll(void) {
-#pragma comment(linker, "/export:BinaryenDemoteFloat64=BinaryenDemoteFloat64Dll")
-	return BinaryenDemoteFloat64();
-}
-
-DllExport(BinaryenOp) BinaryenReinterpretInt32Dll(void) {
-#pragma comment(linker, "/export:BinaryenReinterpretInt32=BinaryenReinterpretInt32Dll")
-	return BinaryenReinterpretInt32();
-}
-
-DllExport(BinaryenOp) BinaryenReinterpretInt64Dll(void) {
-#pragma comment(linker, "/export:BinaryenReinterpretInt64=BinaryenReinterpretInt64Dll")
-	return BinaryenReinterpretInt64();
-}
-
-DllExport(BinaryenOp) BinaryenAddDll(void) {
-#pragma comment(linker, "/export:BinaryenAdd=BinaryenAddDll")
-	return BinaryenAdd();
-}
-
-DllExport(BinaryenOp) BinaryenSubDll(void) {
-#pragma comment(linker, "/export:BinaryenSub=BinaryenSubDll")
-	return BinaryenSub();
-}
-
-DllExport(BinaryenOp) BinaryenMulDll(void) {
-#pragma comment(linker, "/export:BinaryenMul=BinaryenMulDll")
-	return BinaryenMul();
-}
-
-DllExport(BinaryenOp) BinaryenDivSDll(void) {
-#pragma comment(linker, "/export:BinaryenDivS=BinaryenDivSDll")
-	return BinaryenDivS();
-}
-
-DllExport(BinaryenOp) BinaryenDivUDll(void) {
-#pragma comment(linker, "/export:BinaryenDivU=BinaryenDivUDll")
-	return BinaryenDivU();
-}
-
-DllExport(BinaryenOp) BinaryenRemSDll(void) {
-#pragma comment(linker, "/export:BinaryenRemS=BinaryenRemSDll")
-	return BinaryenRemS();
-}
-
-DllExport(BinaryenOp) BinaryenRemUDll(void) {
-#pragma comment(linker, "/export:BinaryenRemU=BinaryenRemUDll")
-	return BinaryenRemU();
-}
-
-DllExport(BinaryenOp) BinaryenAndDll(void) {
-#pragma comment(linker, "/export:BinaryenAnd=BinaryenAndDll")
-	return BinaryenAnd();
-}
-
-DllExport(BinaryenOp) BinaryenOrDll(void) {
-#pragma comment(linker, "/export:BinaryenOr=BinaryenOrDll")
-	return BinaryenOr();
-}
-
-DllExport(BinaryenOp) BinaryenXorDll(void) {
-#pragma comment(linker, "/export:BinaryenXor=BinaryenXorDll")
-	return BinaryenXor();
-}
-
-DllExport(BinaryenOp) BinaryenShlDll(void) {
-#pragma comment(linker, "/export:BinaryenShl=BinaryenShlDll")
-	return BinaryenShl();
-}
-
-DllExport(BinaryenOp) BinaryenShrUDll(void) {
-#pragma comment(linker, "/export:BinaryenShrU=BinaryenShrUDll")
-	return BinaryenShrU();
-}
-
-DllExport(BinaryenOp) BinaryenShrSDll(void) {
-#pragma comment(linker, "/export:BinaryenShrS=BinaryenShrSDll")
-	return BinaryenShrS();
-}
-
-DllExport(BinaryenOp) BinaryenRotLDll(void) {
-#pragma comment(linker, "/export:BinaryenRotL=BinaryenRotLDll")
-	return BinaryenRotL();
-}
-
-DllExport(BinaryenOp) BinaryenRotRDll(void) {
-#pragma comment(linker, "/export:BinaryenRotR=BinaryenRotRDll")
-	return BinaryenRotR();
-}
-
-DllExport(BinaryenOp) BinaryenDivDll(void) {
-#pragma comment(linker, "/export:BinaryenDiv=BinaryenDivDll")
-	return BinaryenDiv();
-}
-
-DllExport(BinaryenOp) BinaryenCopySignDll(void) {
-#pragma comment(linker, "/export:BinaryenCopySign=BinaryenCopySignDll")
-	return BinaryenCopySign();
-}
-
-DllExport(BinaryenOp) BinaryenMinDll(void) {
-#pragma comment(linker, "/export:BinaryenMin=BinaryenMinDll")
-	return BinaryenMin();
-}
-
-DllExport(BinaryenOp) BinaryenMaxDll(void) {
-#pragma comment(linker, "/export:BinaryenMax=BinaryenMaxDll")
-	return BinaryenMax();
-}
-
-DllExport(BinaryenOp) BinaryenEqDll(void) {
-#pragma comment(linker, "/export:BinaryenEq=BinaryenEqDll")
-	return BinaryenEq();
-}
-
-DllExport(BinaryenOp) BinaryenNeDll(void) {
-#pragma comment(linker, "/export:BinaryenNe=BinaryenNeDll")
-	return BinaryenNe();
-}
-
-DllExport(BinaryenOp) BinaryenLtSDll(void) {
-#pragma comment(linker, "/export:BinaryenLtS=BinaryenLtSDll")
-	return BinaryenLtS();
-}
-
-DllExport(BinaryenOp) BinaryenLtUDll(void) {
-#pragma comment(linker, "/export:BinaryenLtU=BinaryenLtUDll")
-	return BinaryenLtU();
-}
-
-DllExport(BinaryenOp) BinaryenLeSDll(void) {
-#pragma comment(linker, "/export:BinaryenLeS=BinaryenLeSDll")
-	return BinaryenLeS();
-}
-
-DllExport(BinaryenOp) BinaryenLeUDll(void) {
-#pragma comment(linker, "/export:BinaryenLeU=BinaryenLeUDll")
-	return BinaryenLeU();
-}
-
-DllExport(BinaryenOp) BinaryenGtSDll(void) {
-#pragma comment(linker, "/export:BinaryenGtS=BinaryenGtSDll")
-	return BinaryenGtS();
-}
-
-DllExport(BinaryenOp) BinaryenGtUDll(void) {
-#pragma comment(linker, "/export:BinaryenGtU=BinaryenGtUDll")
-	return BinaryenGtU();
-}
-
-DllExport(BinaryenOp) BinaryenGeSDll(void) {
-#pragma comment(linker, "/export:BinaryenGeS=BinaryenGeSDll")
-	return BinaryenGeS();
-}
-
-DllExport(BinaryenOp) BinaryenGeUDll(void) {
-#pragma comment(linker, "/export:BinaryenGeU=BinaryenGeUDll")
-	return BinaryenGeU();
-}
-
-DllExport(BinaryenOp) BinaryenLtDll(void) {
-#pragma comment(linker, "/export:BinaryenLt=BinaryenLtDll")
-	return BinaryenLt();
-}
-
-DllExport(BinaryenOp) BinaryenLeDll(void) {
-#pragma comment(linker, "/export:BinaryenLe=BinaryenLeDll")
-	return BinaryenLe();
-}
-
-DllExport(BinaryenOp) BinaryenGtDll(void) {
-#pragma comment(linker, "/export:BinaryenGt=BinaryenGtDll")
-	return BinaryenGt();
-}
-
-DllExport(BinaryenOp) BinaryenGeDll(void) {
-#pragma comment(linker, "/export:BinaryenGe=BinaryenGeDll")
-	return BinaryenGe();
-}
-
-DllExport(BinaryenOp) BinaryenPageSizeDll(void) {
-#pragma comment(linker, "/export:BinaryenPageSize=BinaryenPageSizeDll")
-	return BinaryenPageSize();
-}
-
-DllExport(BinaryenOp) BinaryenCurrentMemoryDll(void) {
-#pragma comment(linker, "/export:BinaryenCurrentMemory=BinaryenCurrentMemoryDll")
-	return BinaryenCurrentMemory();
-}
-
-DllExport(BinaryenOp) BinaryenGrowMemoryDll(void) {
-#pragma comment(linker, "/export:BinaryenGrowMemory=BinaryenGrowMemoryDll")
-	return BinaryenGrowMemory();
-}
-
-DllExport(BinaryenOp) BinaryenHasFeatureDll(void) {
-#pragma comment(linker, "/export:BinaryenHasFeature=BinaryenHasFeatureDll")
-	return BinaryenHasFeature();
-}
-
-DllExport(BinaryenExpressionRef) BinaryenBlockDll(BinaryenModuleRef module, const char* name, BinaryenExpressionRef* children, BinaryenIndex numChildren) {
-#pragma comment(linker, "/export:BinaryenBlock=BinaryenBlockDll")
-	return BinaryenBlock(module, name, children, numChildren);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenIfDll(BinaryenModuleRef module, BinaryenExpressionRef condition, BinaryenExpressionRef ifTrue, BinaryenExpressionRef ifFalse) {
-#pragma comment(linker, "/export:BinaryenIf=BinaryenIfDll")
-	return BinaryenIf(module, condition, ifTrue, ifFalse);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenLoopDll(BinaryenModuleRef module, const char* out, const char* in, BinaryenExpressionRef body) {
-#pragma comment(linker, "/export:BinaryenLoop=BinaryenLoopDll")
-	return BinaryenLoop(module, out, in, body);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenBreakDll(BinaryenModuleRef module, const char* name, BinaryenExpressionRef condition, BinaryenExpressionRef value) {
-#pragma comment(linker, "/export:BinaryenBreak=BinaryenBreakDll")
-	return BinaryenBreak(module, name, condition, value);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenSwitchDll(BinaryenModuleRef module, const char **names, BinaryenIndex numNames, const char* defaultName, BinaryenExpressionRef condition, BinaryenExpressionRef value) {
-#pragma comment(linker, "/export:BinaryenSwitch=BinaryenSwitchDll")
-	return BinaryenSwitch(module, names, numNames, defaultName, condition, value);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenCallDll(BinaryenModuleRef module, const char *target, BinaryenExpressionRef* operands, BinaryenIndex numOperands, BinaryenType returnType) {
-#pragma comment(linker, "/export:BinaryenCall=BinaryenCallDll")
-	return BinaryenCall(module, target, operands, numOperands, returnType);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenCallImportDll(BinaryenModuleRef module, const char *target, BinaryenExpressionRef* operands, BinaryenIndex numOperands, BinaryenType returnType) {
-#pragma comment(linker, "/export:BinaryenCallImport=BinaryenCallImportDll")
-	return BinaryenCallImport(module, target, operands, numOperands, returnType);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenCallIndirectDll(BinaryenModuleRef module, BinaryenExpressionRef target, BinaryenExpressionRef* operands, BinaryenIndex numOperands, BinaryenFunctionTypeRef type) {
-#pragma comment(linker, "/export:BinaryenCallIndirect=BinaryenCallIndirectDll")
-	return BinaryenCallIndirect(module, target, operands, numOperands, type);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenGetLocalDll(BinaryenModuleRef module, BinaryenIndex index, BinaryenType type) {
-#pragma comment(linker, "/export:BinaryenGetLocal=BinaryenGetLocalDll")
-	return BinaryenGetLocal(module, index, type);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenSetLocalDll(BinaryenModuleRef module, BinaryenIndex index, BinaryenExpressionRef value) {
-#pragma comment(linker, "/export:BinaryenSetLocal=BinaryenSetLocalDll")
-	return BinaryenSetLocal(module, index, value);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenLoadDll(BinaryenModuleRef module, uint32_t bytes, int8_t signed_, uint32_t offset, uint32_t align, BinaryenType type, BinaryenExpressionRef ptr) {
-#pragma comment(linker, "/export:BinaryenLoad=BinaryenLoadDll")
-	return BinaryenLoad(module, bytes, signed_, offset, align, type, ptr);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenStoreDll(BinaryenModuleRef module, uint32_t bytes, uint32_t offset, uint32_t align, BinaryenExpressionRef ptr, BinaryenExpressionRef value) {
-#pragma comment(linker, "/export:BinaryenStore=BinaryenStoreDll")
-	return BinaryenStore(module, bytes, offset, align, ptr, value);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenConstDll(BinaryenModuleRef module, struct BinaryenLiteral value) {
-#pragma comment(linker, "/export:BinaryenConst=BinaryenConstDll")
-	return BinaryenConst(module, value);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenUnaryDll(BinaryenModuleRef module, BinaryenOp op, BinaryenExpressionRef value) {
-#pragma comment(linker, "/export:BinaryenUnary=BinaryenUnaryDll")
-	return BinaryenUnary(module, op, value);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenBinaryDll(BinaryenModuleRef module, BinaryenOp op, BinaryenExpressionRef left, BinaryenExpressionRef right) {
-#pragma comment(linker, "/export:BinaryenBinary=BinaryenBinaryDll")
-	return BinaryenBinary(module, op, left, right);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenSelectDll(BinaryenModuleRef module, BinaryenExpressionRef condition, BinaryenExpressionRef ifTrue, BinaryenExpressionRef ifFalse) {
-#pragma comment(linker, "/export:BinaryenSelect=BinaryenSelectDll")
-	return BinaryenSelect(module, condition, ifTrue, ifFalse);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenReturnDll(BinaryenModuleRef module, BinaryenExpressionRef value) {
-#pragma comment(linker, "/export:BinaryenReturn=BinaryenReturnDll")
-	return BinaryenReturn(module, value);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenHostDll(BinaryenModuleRef module, BinaryenOp op, const char* name, BinaryenExpressionRef* operands, BinaryenIndex numOperands) {
-#pragma comment(linker, "/export:BinaryenHost=BinaryenHostDll")
-	return BinaryenHost(module, op, name, operands, numOperands);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenNopDll(BinaryenModuleRef module) {
-#pragma comment(linker, "/export:BinaryenNop=BinaryenNopDll")
-	return BinaryenNop(module);
-}
-
-DllExport(BinaryenExpressionRef) BinaryenUnreachableDll(BinaryenModuleRef module) {
-#pragma comment(linker, "/export:BinaryenUnreachable=BinaryenUnreachableDll")
-	return BinaryenUnreachable(module);
-}
-
-DllExport(BinaryenFunctionRef) BinaryenAddFunctionDll(BinaryenModuleRef module, const char* name, BinaryenFunctionTypeRef type, BinaryenType* localTypes, BinaryenIndex numLocalTypes, BinaryenExpressionRef body) {
-#pragma comment(linker, "/export:BinaryenAddFunction=BinaryenAddFunctionDll")
-	return BinaryenAddFunction(module, name, type, localTypes, numLocalTypes, body);
-}
-
-DllExport(BinaryenImportRef) BinaryenAddImportDll(BinaryenModuleRef module, const char* internalName, const char* externalModuleName, const char *externalBaseName, BinaryenFunctionTypeRef type) {
-#pragma comment(linker, "/export:BinaryenAddImport=BinaryenAddImportDll")
-	return BinaryenAddImport(module, internalName, externalModuleName, externalBaseName, type);
-}
-
-DllExport(BinaryenExportRef) BinaryenAddExportDll(BinaryenModuleRef module, const char* internalName, const char* externalName) {
-#pragma comment(linker, "/export:BinaryenAddExport=BinaryenAddExportDll")
-	return BinaryenAddExport(module, internalName, externalName);
-}
-
-DllExport(void) BinaryenSetFunctionTableDll(BinaryenModuleRef module, BinaryenFunctionRef* functions, BinaryenIndex numFunctions) {
-#pragma comment(linker, "/export:BinaryenSetFunctionTable=BinaryenSetFunctionTableDll")
-	BinaryenSetFunctionTable(module, functions, numFunctions);
-}
-
-DllExport(void) BinaryenSetMemoryDll(BinaryenModuleRef module, BinaryenIndex initial, BinaryenIndex maximum, const char* exportName, const char **segments, BinaryenIndex* segmentOffsets, BinaryenIndex* segmentSizes, BinaryenIndex numSegments) {
-#pragma comment(linker, "/export:BinaryenSetMemory=BinaryenSetMemoryDll")
-	BinaryenSetMemory(module, initial, maximum, exportName, segments, segmentOffsets, segmentSizes, numSegments);
-}
-
-DllExport(void) BinaryenSetStartDll(BinaryenModuleRef module, BinaryenFunctionRef start) {
-#pragma comment(linker, "/export:BinaryenSetStart=BinaryenSetStartDll")
-	BinaryenSetStart(module, start);
-}
-
-DllExport(void) BinaryenModulePrintDll(BinaryenModuleRef module) {
-#pragma comment(linker, "/export:BinaryenModulePrint=BinaryenModulePrintDll")
-	BinaryenModulePrint(module);
-}
-
-DllExport(int) BinaryenModuleValidateDll(BinaryenModuleRef module) {
-#pragma comment(linker, "/export:BinaryenModuleValidate=BinaryenModuleValidateDll")
-	return BinaryenModuleValidate(module);
-}
-
-DllExport(void) BinaryenModuleOptimizeDll(BinaryenModuleRef module) {
-#pragma comment(linker, "/export:BinaryenModuleOptimize=BinaryenModuleOptimizeDll")
-	BinaryenModuleOptimize(module);
-}
-
-DllExport(size_t) BinaryenModuleWriteDll(BinaryenModuleRef module, char* output, size_t outputSize) {
-#pragma comment(linker, "/export:BinaryenModuleWrite=BinaryenModuleWriteDll")
-	return BinaryenModuleWrite(module, output, outputSize);
-}
-
-DllExport(BinaryenModuleRef) BinaryenModuleReadDll(char* input, size_t inputSize) {
-#pragma comment(linker, "/export:BinaryenModuleRead=BinaryenModuleReadDll")
-	return BinaryenModuleRead(input, inputSize);
-}
-
-DllExport(RelooperRef) RelooperCreateDll(void) {
-#pragma comment(linker, "/export:RelooperCreate=RelooperCreateDll")
-	return RelooperCreate();
-}
-
-DllExport(RelooperBlockRef) RelooperAddBlockDll(RelooperRef relooper, BinaryenExpressionRef code) {
-#pragma comment(linker, "/export:RelooperAddBlock=RelooperAddBlockDll")
-	return RelooperAddBlock(relooper, code);
-}
-
-DllExport(void) RelooperAddBranchDll(RelooperBlockRef from, RelooperBlockRef to, BinaryenExpressionRef condition, BinaryenExpressionRef code) {
-#pragma comment(linker, "/export:RelooperAddBranch=RelooperAddBranchDll")
-	RelooperAddBranch(from, to, condition, code);
-}
-
-DllExport(BinaryenExpressionRef) RelooperRenderAndDisposeDll(RelooperRef relooper, RelooperBlockRef entry, BinaryenIndex labelHelper, BinaryenModuleRef module) {
-#pragma comment(linker, "/export:RelooperRenderAndDispose=RelooperRenderAndDisposeDll")
-	return RelooperRenderAndDispose(relooper, entry, labelHelper, module);
-}
 
 #endif
